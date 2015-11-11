@@ -2,11 +2,10 @@
  * 
  */
 var EmpresaBox = React.createClass({
-	handleDeleteSubmit: function(id) {
-		var rows = this.state.data.filter(function(elem) {
-            return elem.id != id;
-        });
-		this.setState({data:rows});
+	handleDeleteSubmit: function(empresa) {
+		this.setState({empresSelecionada: empresa});
+		
+		
 		/*
 		$.ajax({
 			  url: "services/library/book/"+isbn,
@@ -22,12 +21,28 @@ var EmpresaBox = React.createClass({
 			*/
 			
 	},
+	handleCancelaSubmit: function(empresa) {
+		this.setState({empresSelecionada: []});
+	},
+	handleConfirmaDeleteSubmit: function(id){
+		var rows = this.state.data.filter(function(elem) {
+            return elem.id != id;
+        });
+		this.setState({data:rows, empresSelecionada: []});
+		
+	},
 	getInitialState: function() {
-	    return {data: data};
+	    return {data: data, empresSelecionada: []};
 	},
 	render: function() {
 		return (
 			<div>
+				<div>
+					<FormConfirmar onEmpresaSubmit={this.handleConfirmaDeleteSubmit} 
+						onCancelaSubmit={this.handleCancelaSubmit} 
+						id={this.state.empresSelecionada.id} 
+						nome={this.state.empresSelecionada.nome} />
+				</div>
 				<div>
 					<FormDeletar onEmpresaSubmit={this.handleDeleteSubmit} />
 				</div>
@@ -77,11 +92,13 @@ var Empresa = React.createClass({
 	handleSubmit: function(e) {
 		e.preventDefault();
 		var id = this.refs.id.value.trim();
-		if (!id) {
+		var nome = this.refs.nome.value.trim();
+		if (!id || !nome) {
 		  return;
 		}
-		this.props.onEmpresaSubmit(id);
+		this.props.onEmpresaSubmit({id: id,nome: nome});
 		this.refs.id.value = '';
+		this.refs.nome.value = '';
 		return;
 	},
 	render: function()
@@ -93,6 +110,7 @@ var Empresa = React.createClass({
 				<td>
 					<form onSubmit={this.handleSubmit}>
 						<input type="hidden" value={this.props.id} ref="id" />
+						<input type="hidden" value={this.props.nome} ref="nome" />
 						<input type="submit" value="Deletar" />
 					</form>
 				</td>
@@ -124,6 +142,43 @@ var FormDeletar = React.createClass({
 		);
 	}
 });
+
+var FormConfirmar = React.createClass({
+	handleConfirmaSubmit: function(e) {
+		e.preventDefault();
+		var id = this.refs.id.value.trim();
+		if (!id) {
+		  return;
+		}
+		this.props.onEmpresaSubmit(id);
+		this.refs.id.value = '';
+		return;
+	},
+	handleCancelaSubmit: function(e){
+		e.preventDefault();
+		this.props.onCancelaSubmit();
+		this.refs.id.value = '';
+		return;
+	},
+	render: function()
+	{
+		return(
+			<div>
+				<form name="ConfirmaDeletar" onSubmit={this.handleConfirmaSubmit}>
+					<input type="hidden" value={this.props.id} ref="id" />
+					Confirma a remo&ccedil;&atilde;o da empresa {this.props.nome}?
+					<br />
+					ATEN&Ccedil;&Atilde;O: Esta a&ccedil;&atilde;o n&atilde;o poder&aacute; ser desfeita.
+					<br />
+					<input type="submit" value="Confirma" />
+				</form>
+				<form name="CancelaDeletar" onSubmit={this.handleCancelaSubmit}>
+					<input type="submit" value="Cancela" />
+				</form>
+			</div>
+		);
+	}
+})
 
 var data = [ {id:"1", nome: "Expresso rio guaíba"}, {id:"2", nome: "Sogal"},{id:"3", nome: "Viação pelicano"}];
 //pollInterval={10000}
