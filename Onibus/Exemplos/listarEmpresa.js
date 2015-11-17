@@ -7,7 +7,7 @@ var EmpresaBox = React.createClass({
 		if(!filtro)
 		{
 			this.setState({data:[]});
-			this.setState({data:data});
+			this.setState({data:this.state.dataF});
 			return;
 		}
 		var rows = this.state.data.filter(function(elem) {
@@ -18,7 +18,7 @@ var EmpresaBox = React.createClass({
 		this.setState({data:rows});
 	},
 	getInitialState: function() {
-	    return {data: data};
+	    return {data: data, dataF: data};
 	},
 	render: function() {
 		return (
