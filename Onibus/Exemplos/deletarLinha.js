@@ -44,9 +44,6 @@ var LinhaBox = React.createClass({
 						nome={this.state.linhaSelecionada.nome} />
 				</div>
 				<div>
-					<FormDeletar onLinhaSubmit={this.handleDeleteSubmit} />
-				</div>
-				<div>
 					<LinhaLista data={this.state.data} onLinhaSubmit={this.handleDeleteSubmit} />
 				</div>
 			</div>
@@ -55,8 +52,8 @@ var LinhaBox = React.createClass({
 });
 
 var LinhaLista = React.createClass({
-	handleDeleteSubmit: function(id) {
-		this.props.onLinhaSubmit(id);
+	handleDeleteSubmit: function(linha) {
+		this.props.onLinhaSubmit(linha);
 	},
 	render: function() {
 		var linhasNodes = this.props.data.map(function(linha)
@@ -123,8 +120,8 @@ var Linha = React.createClass({
 				<td>{this.props.linha.valor}</td>
 				<td>
 					<form onSubmit={this.handleSubmit}>
-						<input type="hidden" value={this.props.id} ref="id" />
-						<input type="hidden" value={this.props.nome} ref="nome" />
+						<input type="hidden" value={this.props.linha.id} ref="id" />
+						<input type="hidden" value={this.props.linha.nome} ref="nome" />
 						<input type="submit" value="Deletar" />
 					</form>
 				</td>
@@ -132,30 +129,6 @@ var Linha = React.createClass({
 		);
 	}
 })
-
-var FormDeletar = React.createClass({
-	handleSubmit: function(e) {
-		e.preventDefault();
-		var id = this.refs.id.value.trim();
-		if (!id) {
-		  return;
-		}
-		this.props.onLinhaSubmit(id);
-		this.refs.id.value = '';
-		this.refs.nome.value = '';
-		return;
-	},
-	render: function()
-	{
-		return(
-			<form name="Deletar" onSubmit={this.handleSubmit}>
-				ID: <input type="text" placeholder="id" ref="id" />
-				<br />
-				<input type="submit" value="Deletar" />
-			</form>
-		);
-	}
-});
 
 var FormConfirmar = React.createClass({
 	handleConfirmaSubmit: function(e) {
